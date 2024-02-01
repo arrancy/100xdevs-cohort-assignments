@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 require("mongoose-type-url");
+require("dotenv").config();
 
 // Connect to MongoDB
-mongoose.connect(
-  "mongodb+srv://ruturajchondekar:GlLErtjinPtOIZug@cluster0.qxfejac.mongodb.net/courseSellingApp"
-);
+mongoose.connect(process.env.MONGODB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Define schemas
 const AdminSchema = new mongoose.Schema({
@@ -21,6 +23,7 @@ const UserSchema = new mongoose.Schema({
 
 const CourseSchema = new mongoose.Schema({
   // Schema definition here
+  Id: Number,
   title: String,
   description: String,
   price: Number,
