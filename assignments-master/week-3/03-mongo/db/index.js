@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
   // Schema definition here
   username: String,
   password: String,
+  coursesPurchased: {
+    type: [Number],
+    default: [],
+  },
 });
 
 const CourseSchema = new mongoose.Schema({
