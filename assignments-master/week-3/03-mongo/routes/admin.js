@@ -17,7 +17,6 @@ function validateCourseInput(input) {
   const response = schema.safeParse(input);
   return response;
 }
-let courseId = 0;
 
 // Admin Routes
 router.post("/signup", async (req, res) => {
@@ -52,7 +51,8 @@ router.post("/courses", adminMiddleware, async (req, res) => {
 
   const Response = validateCourseInput(req.body);
   if (Response.success) {
-    courseId++;
+    let courseArray = await Course.find();
+    let courseId = courseArray.length + 1;
     let courseTitle = req.body.title;
     let courseDescription = req.body.description;
     let coursePrice = req.body.price;
