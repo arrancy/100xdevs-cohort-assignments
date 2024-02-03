@@ -27,12 +27,31 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.post("/signin", (req, res) => {
-  // Implement admin signup logic
+router.post("/signin", async (req, res) => {
+  // Implement user signin logic
+  const userUserName = req.body.username;
+  const userPassword = req.body.password;
+  const userIsValid = await User.findOne({
+    username: userUserName,
+    password: userPassword,
+  });
+  if (userIsValid) {
+    try {
+      const token = await jwt.sign({ username: userUserName }, jwtPassword);
+      res.status(200).json({ token });
+    } catch (error) {
+      res.status(400).json({
+        msg: "an error occured",
+      });
+      console.log(error);
+    }
+  }
 });
 
-router.get("/courses", (req, res) => {
+router.get("/courses", userMiddleware, async (req, res) => {
   // Implement listing all courses logic
+  let courseArray = await Course.find();
+  res.status(200).json({ courseArray });
 });
 
 router.post("/courses/:courseId", userMiddleware, (req, res) => {
