@@ -3,10 +3,7 @@ require("mongoose-type-url");
 require("dotenv").config();
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGODB_URL);
 
 // Define schemas
 const AdminSchema = new mongoose.Schema({
