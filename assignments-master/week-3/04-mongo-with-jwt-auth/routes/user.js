@@ -4,12 +4,27 @@ const userMiddleware = require("../middleware/user");
 const { Admin } = require("../db/index");
 const { User } = require("../db/index");
 const { Course } = require("../db/index");
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const jwtPassword = process.env.JWT_SECRET;
 
 // User Routes
-router.post("/signup", (req, res) => {
+router.post("/signup", async (req, res) => {
   // Implement user signup logic
+  const userUserName = req.body.username;
+  const userPassword = req.body.password;
+  const alreadyExists = await User.findOne({ username: userUserName });
+  if (alreadyExists) {
+    res.status(400).json({
+      msg: "username already exists",
+    });
+  } else {
+    const user = new User({ username: userUserName, password: userPassword });
+    await user.save();
+    res.status(200).json({
+      msg: "new user created successfully",
+    });
+  }
 });
 
 router.post("/signin", (req, res) => {
