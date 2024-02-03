@@ -4,6 +4,7 @@ const userMiddleware = require("../middleware/user");
 const { Admin } = require("../db/index");
 const { User } = require("../db/index");
 const { Course } = require("../db/index");
+const zod = require("zod");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const jwtPassword = process.env.JWT_SECRET;
@@ -54,12 +55,53 @@ router.get("/courses", userMiddleware, async (req, res) => {
   res.status(200).json({ courseArray });
 });
 
-router.post("/courses/:courseId", userMiddleware, (req, res) => {
+router.post("/courses/:courseId", userMiddleware, async (req, res) => {
   // Implement course purchase logic
+  const IdOfCourseToPurchase = parseInt(req.params.courseId);
+  const schema = zod.number();
+  const response = schema.safeParse(IdOfCourseToPurchase);
+  if (response.success) {
+    const coursePresent = await Course.findOne({ Id: IdOfCourseToPurchase });
+    if (coursePresent) {
+      try {
+        let token = req.headers.authorization.replace("Bearer ", "");
+        const decoded = await jwt.verify(token, jwtPassword);
+        let usersUsername = decoded.username;
+        const currentUser = await User.findOne({ username: usersUsername });
+        currentUser.coursesPurchased.push(IdOfCourseToPurchase);
+        await currentUser.save();
+        res.status(200).json({ msg: "course purchased successfully" });
+      } catch (error) {
+        console.log(error);
+        res.status(400).json({ msg: "an error occured" });
+      }
+    } else {
+      res.status(400).json({ msg: "invalid input" });
+    }
+  } else {
+    res.status(400).json({ msg: "invalid input" });
+  }
 });
 
-router.get("/purchasedCourses", userMiddleware, (req, res) => {
+router.get("/purchasedCourses", userMiddleware, async (req, res) => {
   // Implement fetching purchased courses logic
+  try {
+    let token = req.headers.authorization.replace("Bearer ", "");
+    const decoded = await jwt.verify(token, jwtPassword);
+    let usersUsername = decoded.username;
+    const currentUser = await User.findOne({ username: usersUsername });
+    let coursesPurchasedArray = currentUser.coursesPurchased;
+    let newArray = [];
+    for (let i = 0; i < coursesPurchasedArray.length; i++) {
+      let courseToPush = coursesPurchasedArray[i];
+      let courseToPushObject = await Course.findOne({ Id: courseToPush });
+      newArray.push(courseToPushObject);
+    }
+    res.status(200).json(newArray);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ msg: "an error occured" });
+  }
 });
 
 module.exports = router;
