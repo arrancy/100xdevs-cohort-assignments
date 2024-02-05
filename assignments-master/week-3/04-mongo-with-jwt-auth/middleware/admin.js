@@ -1,5 +1,5 @@
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const { Admin } = require("../db/index");
 const jwtPassword = process.env.JWT_SECRET;
 
 // Middleware for handling auth
