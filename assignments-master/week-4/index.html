@@ -2,7 +2,19 @@
 <html>
 
 <head>
-  <script>
+
+</head>
+
+<body>
+  <input type="text" id="title" placeholder="Todo title"></input> <br /><br />
+  <input type="text" id="description" placeholder="Todo description"></input> <br /><br />
+  <button onclick="addTodo()">Add todo</button>
+  <br /> <br />
+
+  <div id="todos">
+
+  </div>
+    <script>
     let globalId = 1;
     let todoState = [];
     let oldTodoState = [];
@@ -25,9 +37,21 @@
       // 1. added
       // 2. deleted
       // 3. updated
-      const added = [];
-      const deleted = [];
-      const updated = [];
+      let oldLength = oldTodoState.length;
+      let newLength = newTodos.length;
+      let diffInLength = newLength-oldLength;
+      if(diffInLength > 0){
+        // todos are added 
+        added = newTodos.splice(newLength-diffInLength, diffInLength);
+      }
+      else if(diffInLength < 0){
+        diffInLength = diffInLength*(-1)
+        deleted = oldTodoState.splice(oldLength-diffInLength, diffInLength)
+      }
+
+      let added = [];
+      let deleted = [];
+      let updated = [];
       // calculate these 3 arrays
       // call addTodo, removeTodo, updateTodo functions on each of the
       // elements
@@ -45,17 +69,6 @@
       updateState(todoState);
     }
   </script>
-</head>
-
-<body>
-  <input type="text" id="title" placeholder="Todo title"></input> <br /><br />
-  <input type="text" id="description" placeholder="Todo description"></input> <br /><br />
-  <button onclick="addTodo()">Add todo</button>
-  <br /> <br />
-
-  <div id="todos">
-
-  </div>
 </body>
 
 </html>
