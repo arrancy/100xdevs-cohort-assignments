@@ -30,6 +30,7 @@ function App() {
           backgroundColor: color,
           height: "100vh",
           width: "100vw",
+          textAlign: "center",
         }}
       >
         {colorsArray.map((colour, index) => {
@@ -39,6 +40,14 @@ function App() {
               ref={buttonRefs[index]}
               onClick={() => {
                 handleClick(index);
+              }}
+              style={{
+                height: "40px",
+                fontSize: "1.2rem",
+                width: "150px",
+                color: colour === "white" ? "black" : "white",
+                backgroundColor: colour,
+                borderRadius: "10px",
               }}
             >
               {colour}
